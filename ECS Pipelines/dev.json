@@ -1,148 +1,126 @@
 {
-    "family": "flam-services-servicename-dev",
-    "taskRoleArn": "arn:aws:iam::214493502073:role/FlamServicesTaskRole",
-    "executionRoleArn": "arn:aws:iam::214493502073:role/FlamServicesTaskRole",
-    "networkMode": "bridge",
-    "containerDefinitions": [
-      {
-        "name": "flam-services-servicename-dev",
-        "image": "${IMAGE}",
-        "cpu": 512,
-        "memory": 256,
-        "memoryReservation": 256,
-        "portMappings": [
-          {
-            "containerPort": 3000,
-            "hostPort": 0,
-            "protocol": "tcp"
-          }
-        ],
-        "essential": true,
-        "environment": [
-          {
-            "name": "APP_ENVIROMENT",
-            "value": "dev"
-          },
-          {
-            "name": "CONTEXT",
-            "value": "service-name"
-          },
-          {
-            "name": "APP_PORT",
-            "value": "3000"
-          },
-          {
-            "name": "AWS_REGION",
-            "value": "ap-south-1"
-          },
-          {
-            "name": "REGION_NAME",
-            "value": "ap-south-1"
-          }
-        ],
-        "secrets": [  
-          {
-            "name": "AWS_ACCESS_KEY_ID",
-            "valueFrom": "/conf/service/dev/AWS_ACCESS_KEY_ID"
-          },
-          {
-            "name": "UMS_GET_ADMIN_SECRET_KEY",
-            "valueFrom": "/conf/service/dev/UMS_GET_ADMIN_SECRET_KEY"
-          },
-          {
-            "name": "AWS_SECRET_ACCESS_KEY_ID",
-            "valueFrom": "/conf/service/dev/AWS_SECRET_ACCESS_KEY_ID"
-          },
-          {
-            "name": "GET_USER_DATA_URL",
-            "valueFrom": "/conf/service/dev/GET_USER_DATA_URL"
-          },
-          {
-            "name": "EXPERIENCE_ADMIN_SECRET_KEY ",
-            "valueFrom": "/conf/service/dev/EXPERIENCE_ADMIN_SECRET_KEY"
-          },
-          {
-            "name": "UMS_AUTH_VERIFY_URL",
-            "valueFrom": "/conf/service/dev/UMS_AUTH_VERIFY_URL"
-          },
-          {
-            "name": "DATABASE_MONGO_URL",
-            "valueFrom": "/conf/service/dev/DATABASE_MONGO_URL"
-          },
-          {
-            "name": "BUCKET_NAME",
-            "valueFrom": "/conf/service/dev/BUCKET_NAME"
-          },
-          {
-            "name": "AWS_BUCKET_NAME",
-            "valueFrom": "/conf/service/dev/AWS_BUCKET_NAME"
-          },
-          {
-            "name": "FILE_PREFIX",
-            "valueFrom": "/conf/service/dev/FILE_PREFIX"
-          },
-          {
-            "name": "AWS_FILE_PREFIX",
-            "valueFrom": "/conf/service/dev/AWS_FILE_PREFIX"
-          },
-          {
-            "name": "AWS_SQS_NAME",
-            "valueFrom": "/conf/service/dev/AWS_SQS_NAME"
-          },
-         {
-            "name": "ASPECTO_AUTH",
-            "valueFrom": "/conf/flam-aspecto/dev/ASPECTO_AUTH"
-          }
-        ],
-        "hostname": "service",
-        "dockerLabels": {
-          "Environment": "dev",
-          "Name": "service",
-          "Version": "${VERSION}"
-        },
-        "healthCheck": {
-          "command": [
-            "CMD-SHELL",
-            "curl --fail http://localhost:3000/service/health || exit 1"
-          ],
-          "interval": 5,
-          "timeout": 4,
-          "retries": 3,
-          "startPeriod": 5
-        }
-      }
-    ],
-    "requiresCompatibilities": ["EC2"],
-    "cpu": "512",
-    "memory": "256",
-    "tags": [
-      {
-        "key": "GITHUB_BRANCH",
-        "value": "${GITHUB_REF}"
-      },
-      {
-        "key": "GITHUB_BUILD_NUMBER",
-        "value": "${GITHUB_RUN_NUMBER}"
-      },
-      {
-        "key": "GITHUB_COMMIT",
-        "value": "${GITHUB_SHA}"
-      },
-      {
-        "key": "GITHUB_REPO_URL",
-        "value": "https://github.com/homingos/flam-services-servicename/tree/dev"
-      },
-      {
-        "key": "Version",
-        "value": "${VERSION}"
-      },
-      {
-        "key": "Environment",
-        "value": "dev"
-      },
-      {
-        "key": "Name",
-        "value": "Service"
-      }
-    ]
-  }
+	"family": "flam-blundar-dev",
+	"taskRoleArn": "arn:aws:iam::214493502073:role/FlamServicesTaskRole",
+	"executionRoleArn": "arn:aws:iam::214493502073:role/FlamServicesTaskRole",
+	"networkMode": "bridge",
+	"containerDefinitions": [{
+		"name": "flam-blundar-dev",
+		"image": "${IMAGE}",
+		"cpu": 2048,
+		"memory": 12288,
+		"memoryReservation": 12288,
+		"portMappings": [{
+			"containerPort": 3000,
+			"hostPort": 0,
+			"protocol": "tcp"
+		}],
+		"essential": true,
+		"logConfiguration": {
+			"logDriver": "awslogs",
+			"secretOptions": null,
+			"options": {
+				"awslogs-group": "/ecs/flam-blundar-dev",
+				"awslogs-region": "ap-south-1",
+				"awslogs-stream-prefix": "ecs"
+			}
+		},
+		"environment": [{
+				"name": "APP_ENVIROMENT",
+				"value": "dev"
+			},
+			{
+				"name": "CONTEXT",
+				"value": "blundar"
+			},
+			{
+				"name": "APP_PORT",
+				"value": "3000"
+			},
+			{
+				"name": "AWS_REGION",
+				"value": "ap-south-1"
+			},
+			{
+				"name": "REGION_NAME",
+				"value": "ap-south-1"
+			}
+		],
+		"resourceRequirements": [{
+			"type": "GPU",
+			"value": "1"
+		}],
+		"secrets": [{
+				"name": "AWS_ACCESS_KEY_ID",
+				"valueFrom": "/conf/blundar/dev/AWS_ACCESS_KEY_ID"
+			},
+			{
+				"name": "AWS_ACCOUNT_ID",
+				"valueFrom": "/conf/blundar/dev/AWS_ACCOUNT_ID"
+			},
+			{
+				"name": "AWS_SECRET_ACCESS_KEY_ID",
+				"valueFrom": "/conf/blundar/dev/AWS_SECRET_ACCESS_KEY_ID"
+			},
+			{
+				"name": "DATABASE_MONGO_URL",
+				"valueFrom": "/conf/blundar/dev/DATABASE_MONGO_URL"
+			},
+			{
+				"name": "BLUNDAR_SECRET_KEY",
+				"valueFrom": "/conf/blundar/dev/BLUNDAR_SECRET_KEY"
+			},
+			{
+				"name": "ASPECTO_AUTH",
+				"valueFrom": "/conf/flam-aspecto/dev/ASPECTO_AUTH"
+			}
+		],
+		"hostname": "blundar",
+		"dockerLabels": {
+			"Environment": "dev",
+			"Name": "blundar",
+			"Version": "${VERSION}"
+		},
+		"healthCheck": {
+			"command": [
+				"CMD-SHELL",
+				"curl --fail http://localhost:3000/blundar/health || exit 1"
+			],
+			"interval": 5,
+			"timeout": 4,
+			"retries": 3,
+			"startPeriod": 5
+		}
+	}],
+	"requiresCompatibilities": ["EC2"],
+	"cpu": "2048",
+	"memory": "12288",
+	"tags": [{
+			"key": "GITHUB_BRANCH",
+			"value": "${GITHUB_REF}"
+		},
+		{
+			"key": "GITHUB_BUILD_NUMBER",
+			"value": "${GITHUB_RUN_NUMBER}"
+		},
+		{
+			"key": "GITHUB_COMMIT",
+			"value": "${GITHUB_SHA}"
+		},
+		{
+			"key": "GITHUB_REPO_URL",
+			"value": "https://github.com/homingos/blundar"
+		},
+		{
+			"key": "Version",
+			"value": "${VERSION}"
+		},
+		{
+			"key": "Environment",
+			"value": "dev"
+		},
+		{
+			"key": "Name",
+			"value": "blundar"
+		}
+	]
+}
