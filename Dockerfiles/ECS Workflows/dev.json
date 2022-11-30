@@ -1,18 +1,18 @@
 {
-    "family": "flam-services-darkseid-dev",
+    "family": "flam-services-servicename-dev",
     "taskRoleArn": "arn:aws:iam::214493502073:role/FlamServicesTaskRole",
     "executionRoleArn": "arn:aws:iam::214493502073:role/FlamServicesTaskRole",
     "networkMode": "bridge",
     "containerDefinitions": [
       {
-        "name": "flam-services-darkseid-dev",
+        "name": "flam-services-servicename-dev",
         "image": "${IMAGE}",
         "cpu": 512,
         "memory": 256,
         "memoryReservation": 256,
         "portMappings": [
           {
-            "containerPort": 4000,
+            "containerPort": 3000,
             "hostPort": 0,
             "protocol": "tcp"
           }
@@ -25,11 +25,11 @@
           },
           {
             "name": "CONTEXT",
-            "value": "Darkseid"
+            "value": "service-name"
           },
           {
             "name": "APP_PORT",
-            "value": "4000"
+            "value": "3000"
           },
           {
             "name": "AWS_REGION",
@@ -43,67 +43,67 @@
         "secrets": [  
           {
             "name": "AWS_ACCESS_KEY_ID",
-            "valueFrom": "/conf/darkseid/dev/AWS_ACCESS_KEY_ID"
+            "valueFrom": "/conf/service/dev/AWS_ACCESS_KEY_ID"
           },
           {
             "name": "UMS_GET_ADMIN_SECRET_KEY",
-            "valueFrom": "/conf/darkseid/dev/UMS_GET_ADMIN_SECRET_KEY"
+            "valueFrom": "/conf/service/dev/UMS_GET_ADMIN_SECRET_KEY"
           },
           {
             "name": "AWS_SECRET_ACCESS_KEY_ID",
-            "valueFrom": "/conf/darkseid/dev/AWS_SECRET_ACCESS_KEY_ID"
+            "valueFrom": "/conf/service/dev/AWS_SECRET_ACCESS_KEY_ID"
           },
           {
             "name": "GET_USER_DATA_URL",
-            "valueFrom": "/conf/darkseid/dev/GET_USER_DATA_URL"
+            "valueFrom": "/conf/service/dev/GET_USER_DATA_URL"
           },
           {
             "name": "EXPERIENCE_ADMIN_SECRET_KEY ",
-            "valueFrom": "/conf/darkseid/dev/EXPERIENCE_ADMIN_SECRET_KEY"
+            "valueFrom": "/conf/service/dev/EXPERIENCE_ADMIN_SECRET_KEY"
           },
           {
             "name": "UMS_AUTH_VERIFY_URL",
-            "valueFrom": "/conf/darkseid/dev/UMS_AUTH_VERIFY_URL"
+            "valueFrom": "/conf/service/dev/UMS_AUTH_VERIFY_URL"
           },
           {
             "name": "DATABASE_MONGO_URL",
-            "valueFrom": "/conf/darkseid/dev/DATABASE_MONGO_URL"
+            "valueFrom": "/conf/service/dev/DATABASE_MONGO_URL"
           },
           {
             "name": "BUCKET_NAME",
-            "valueFrom": "/conf/darkseid/dev/BUCKET_NAME"
+            "valueFrom": "/conf/service/dev/BUCKET_NAME"
           },
           {
             "name": "AWS_BUCKET_NAME",
-            "valueFrom": "/conf/darkseid/dev/AWS_BUCKET_NAME"
+            "valueFrom": "/conf/service/dev/AWS_BUCKET_NAME"
           },
           {
             "name": "FILE_PREFIX",
-            "valueFrom": "/conf/darkseid/dev/FILE_PREFIX"
+            "valueFrom": "/conf/service/dev/FILE_PREFIX"
           },
           {
             "name": "AWS_FILE_PREFIX",
-            "valueFrom": "/conf/darkseid/dev/AWS_FILE_PREFIX"
+            "valueFrom": "/conf/service/dev/AWS_FILE_PREFIX"
           },
           {
             "name": "AWS_SQS_NAME",
-            "valueFrom": "/conf/darkseid/dev/AWS_SQS_NAME"
+            "valueFrom": "/conf/service/dev/AWS_SQS_NAME"
           },
          {
             "name": "ASPECTO_AUTH",
             "valueFrom": "/conf/flam-aspecto/dev/ASPECTO_AUTH"
           }
         ],
-        "hostname": "darkseid",
+        "hostname": "service",
         "dockerLabels": {
           "Environment": "dev",
-          "Name": "darkseid",
+          "Name": "service",
           "Version": "${VERSION}"
         },
         "healthCheck": {
           "command": [
             "CMD-SHELL",
-            "curl --fail http://localhost:4000/Darkseid/health || exit 1"
+            "curl --fail http://localhost:3000/service/health || exit 1"
           ],
           "interval": 5,
           "timeout": 4,
@@ -130,7 +130,7 @@
       },
       {
         "key": "GITHUB_REPO_URL",
-        "value": "https://github.com/homingos/flam-services-darkseid/tree/dev"
+        "value": "https://github.com/homingos/flam-services-servicename/tree/dev"
       },
       {
         "key": "Version",
@@ -142,7 +142,7 @@
       },
       {
         "key": "Name",
-        "value": "Darkseid"
+        "value": "Service"
       }
     ]
   }
