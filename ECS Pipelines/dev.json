@@ -90,16 +90,16 @@
 				"valueFrom": "/conf/zingcam/dev/FILE_PREFIX"
 			},
 		],
-		"hostname": "blundar",
+		"hostname": "zingcam",
 		"dockerLabels": {
 			"Environment": "dev",
-			"Name": "blundar",
+			"Name": "zingcam",
 			"Version": "${VERSION}"
 		},
 		"healthCheck": {
 			"command": [
 				"CMD-SHELL",
-				"curl --fail http://localhost:3000/blundar/health || exit 1"
+				"curl --fail http://localhost:3000/zingcam/health || exit 1"
 			],
 			"interval": 5,
 			"timeout": 4,
@@ -124,7 +124,7 @@
 		},
 		{
 			"key": "GITHUB_REPO_URL",
-			"value": "https://github.com/homingos/blundar"
+			"value": "https://github.com/homingos/flam-services-zingcam"
 		},
 		{
 			"key": "Version",
@@ -136,7 +136,7 @@
 		},
 		{
 			"key": "Name",
-			"value": "blundar"
+			"value": "ZINGCAM"
 		}
 	]
 }
