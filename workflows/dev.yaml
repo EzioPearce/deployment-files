@@ -1,0 +1,107 @@
+name: Development #change the name according to the development environment
+
+on:
+  push:
+    branches:
+      - dev  #Specify the github branch
+
+jobs:
+  Build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - uses: docker://sonarsource/sonar-scanner-cli:latest  #Used to set up SonarQube here...can be skipped if needed
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }} #Configure these secrets in the github secrets
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_ID }}
+          aws-region: ap-south-1
+
+      - uses: benjlevesque/short-sha@v1.2
+        id: short-sha
+        with:
+          length: 6
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      # Versioning Strategy : ${MAJOR.MINOR.PATCH} ---- FOLLOW THIS ON EVERY PUSH
+      - name: Build, Tag & Push image to Amazon ECR
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          IMAGE_TAG: ${{ steps.short-sha.outputs.sha }}
+        run: |
+          docker build --file .docker/Dockerfile -t $ECR_REGISTRY/flam-zingcam-dev:$IMAGE_TAG .
+          docker push $ECR_REGISTRY/flam-zingcam-dev:$IMAGE_TAG
+
+  Deploy:
+    runs-on: ubuntu-latest
+    needs: ['Build']
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_ID }}
+          aws-region: ap-south-1
+
+      - uses: benjlevesque/short-sha@v1.2
+        id: short-sha
+        with:
+          length: 6
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Populate Variables in Task Definition
+        uses: nowactions/envsubst@v1
+        with:
+          input: ./.aws/ECS/dev.json
+          output: ./task-definition.json
+        env:
+          IMAGE: ${{ steps.login-ecr.outputs.registry }}/flam-zingcam-dev:${{ steps.short-sha.outputs.sha }}
+          VERSION: ${{ steps.short-sha.outputs.sha }}
+          GITHUB_REF: ${GITHUB_REF}
+          GITHUB_RUN_NUMBER: ${GITHUB_RUN_NUMBER}
+          GITHUB_SHA: ${GITHUB_SHA}
+          GITHUB_ACTION_REPOSITORY: ${GITHUB_ACTION_REPOSITORY}
+
+      - name: Deploy to Amazon ECS
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        with:
+          task-definition: task-definition.json
+          service: flam-zingcam
+          cluster: flam-dev
+          wait-for-service-stability: true
+
+  slackNotification:  #Sets up a slack notification in case the CI/CD goes through
+    name: Slack Notification
+    needs:
+      - Deploy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Slack Workflow Notification
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_CHANNEL: services-alerts
+          SLACK_TITLE: What has Changed
+          SLACK_USERNAME: Flam-Services-Bot
+          SLACK_COLOR: ${{ job.status }}
+          SLACK_ICON: https://avatars.slack-edge.com/2021-08-04/2345524105683_46dab77f1d18137c3fa2_88.jpg
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_FOOTER: ZINGCAM DEV

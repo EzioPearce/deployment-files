@@ -1,0 +1,29 @@
+steps:
+  # build the container image
+# - name: "gcr.io/cloud-builders/docker"
+#   args: ["build","-f", ".docker/Dockerfile" ,"-t", "gcr.io/$PROJECT_ID/github.com/homingos/$REPO_NAME:$REF_NAME-$COMMIT_SHA", "."]
+#   # push container image
+# - name: "gcr.io/cloud-builders/docker"
+#   args: ["push", "gcr.io/$PROJECT_ID/github.com/homingos/$REPO_NAME:$REF_NAME-$COMMIT_SHA"]
+  # deploy container image to GKE
+- name: 'gcr.io/kaniko-project/executor:latest'
+  env:
+    - 'BUILD_ENV=${_BUILD_ENV}'
+    - 'PROJECT_ID=${PROJECT_ID}'
+  args:
+  - --dockerfile=.docker/Dockerfile
+  - --destination=gcr.io/$PROJECT_ID/github.com/homingos/$REPO_NAME:$REF_NAME-$COMMIT_SHA
+  - --cache=true
+  - --cache-ttl=48h
+- name: 'ubuntu'
+  env:
+    - 'BUILD_ENV=${_BUILD_ENV}'
+    - 'PROJECT_ID=${PROJECT_ID}'
+  script: apt-get update -y && apt-get install gettext-base && mkdir .k8s/generated && for f in $(find .k8s -regex '.*\.ya*ml'); do envsubst < $f > ".k8s/generated/$(basename $f)"; done
+- name: "gcr.io/cloud-builders/gke-deploy"
+  args:
+  - run
+  - --filename=.k8s/generated/
+  - --image=gcr.io/$PROJECT_ID/github.com/homingos/$REPO_NAME:$REF_NAME-$COMMIT_SHA
+  - --location=asia-south1
+  - --cluster=${_CLUSTER_NAME}

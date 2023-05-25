@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name:  xyz-deployment
+  namespace: xyz
+  labels:
+    name:  xyz
+spec:
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: xyz
+  template:
+    metadata:
+      labels:
+        app: xyz
+    spec:
+      containers:
+      - image:  gcr.io/$PROJECT_ID/github.com/homingos/xyz
+        name:  xyz
+        resources:
+          requests:
+            cpu: 10m
+            memory: 128Mi
+            ephemeral-storage: 10Gi
+          limits:
+            cpu: 10m
+            memory: 128Mi
+            ephemeral-storage: 20Gi
+        livenessProbe:
+          httpGet:
+            path: /xyz/health
+            port: 3000
+            scheme: HTTP
+          initialDelaySeconds: 90
+          timeoutSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /xyz/health
+            port: 3000
+            scheme: HTTP
+          initialDelaySeconds: 30
+          timeoutSeconds: 10
+        ports:
+        - containerPort: 3000
+          name: http
+        envFrom:
+        - secretRef:
+            name: xyz-secrets
+        env:
+        - name: NODE_ENV
+          value: "${BUILD_ENV}"
+        - name: PORT
+          value: "3000"
+        - name: CONTEXT
+          value: "xyz"
+      restartPolicy: Always

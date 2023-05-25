@@ -31,3 +31,4 @@ RUN apk add --no-cache curl
 EXPOSE 4000
 
 CMD node -r '@aspecto/opentelemetry/auto-instrument' dist/main
+#The final statement helps in setting up aspecto telemetry observability metrics
