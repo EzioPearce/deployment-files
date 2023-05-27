@@ -1,10 +1,10 @@
 {
-	"family": "flam-zingcam-dev",
-	"taskRoleArn": "arn:aws:iam::214493502073:role/FlamServicesTaskRole",
-	"executionRoleArn": "arn:aws:iam::214493502073:role/FlamServicesTaskRole",
+	"family": "xyz-dev",
+	"taskRoleArn": "check the task definition for this arn",
+	"executionRoleArn": "check the task definition for this arn",
 	"networkMode": "bridge",
 	"containerDefinitions": [{
-		"name": "flam-zingcam-dev",
+		"name": "xyz-dev",
 		"image": "${IMAGE}",
 		"cpu": 2048,
 		"memory": 12288,
@@ -14,12 +14,12 @@
 			"hostPort": 0,
 			"protocol": "tcp"
 		}],
-		"essential": true,
+		"essential": true, 
 		"logConfiguration": {
 			"logDriver": "awslogs",
 			"secretOptions": null,
 			"options": {
-				"awslogs-group": "/ecs/flam-zingcam-dev",
+				"awslogs-group": "/ecs/xyz-dev",
 				"awslogs-region": "ap-south-1",
 				"awslogs-stream-prefix": "ecs"
 			}
@@ -30,7 +30,7 @@
 			},
 			{
 				"name": "CONTEXT",
-				"value": "zingcam"
+				"value": "xyz"
 			},
 			{
 				"name": "APP_PORT",
@@ -50,56 +50,24 @@
 			"value": "1"
 		}],
 		"secrets": [{
-				"name": "AWS_ACCESS_KEY_ID",
-				"valueFrom": "/conf/zingcam/dev/AWS_ACCESS_KEY_ID"
+				"name": "SECRET1",
+				"valueFrom": "/conf/xyz/dev/SECRET1"
 			},
 			{
-				"name": "ZINGCAM_ADMIN_SECRET_KEY",
-				"valueFrom": "/conf/zingcam/dev/ZINGCAM_ADMIN_SECRET_KEY"
-			},
-			{
-				"name": "AWS_SECRET_ACCESS_KEY_ID",
-				"valueFrom": "/conf/zingcam/dev/AWS_SECRET_ACCESS_KEY_ID"
-			},
-			{
-				"name": "DATABASE_MONGO_URL",
-				"valueFrom": "/conf/zingcam/dev/DATABASE_MONGO_URL"
-			},
-			{
-				"name": "ASPECTO_AUTH",
-				"valueFrom": "/conf/flam-aspecto/dev/ASPECTO_AUTH"
-			},
-			{
-				"name": "LAMBDA_URL",
-				"valueFrom": "/conf/zingcam/dev/LAMBDA_URL"
-			},
-			{
-				"name": "AWS_BUCKET_NAME",
-				"valueFrom": "/conf/zingcam/dev/AWS_BUCKET_NAME"
-			},
-			{
-				"name": "AWS_FILE_PREFIX",
-				"valueFrom": "/conf/zingcam/dev/AWS_FILE_PREFIX"
-			},
-			{
-				"name": "BUCKET_NAME",
-				"valueFrom": "/conf/zingcam/dev/BUCKET_NAME"
-			},
-			{
-				"name": "FILE_PREFIX",
-				"valueFrom": "/conf/zingcam/dev/FILE_PREFIX"
-			},
+				"name": "SECRET2",
+				"valueFrom": "/conf/xyz/dev/SECRET2"
+			}
 		],
-		"hostname": "zingcam",
+		"hostname": "xyz",
 		"dockerLabels": {
 			"Environment": "dev",
-			"Name": "zingcam",
+			"Name": "xyz",
 			"Version": "${VERSION}"
 		},
 		"healthCheck": {
 			"command": [
 				"CMD-SHELL",
-				"curl --fail http://localhost:3000/zingcam/health || exit 1"
+				"curl --fail http://localhost:3000/xyz/health || exit 1"
 			],
 			"interval": 5,
 			"timeout": 4,
@@ -124,7 +92,7 @@
 		},
 		{
 			"key": "GITHUB_REPO_URL",
-			"value": "https://github.com/homingos/flam-services-zingcam"
+			"value": "Enter the github repository url here"
 		},
 		{
 			"key": "Version",
@@ -136,7 +104,7 @@
 		},
 		{
 			"key": "Name",
-			"value": "ZINGCAM"
+			"value": "xyz"
 		}
 	]
 }
